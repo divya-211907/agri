@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL Database Service
+  db:
+    image: postgres:15-alpine
+    container_name: agrichain-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=agrichain
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Mount schema.sql so it automatically seeds the database on initial start
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d agrichain"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Spring Boot Backend REST API Service
+  backend:
+    build: ./backend
+    container_name: agrichain-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/agrichain
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-mock}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-mock}
+      - AWS_REGION=us-east-1
+      - AWS_BEDROCK_SIMULATE=true
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # 3. React Frontend Web Application Service (Served via Nginx)
+  frontend:
+    build: ./frontend
+    container_name: agrichain-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

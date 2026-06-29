@@ -1,0 +1,188 @@
+/* AgriChain AI Professional Agricultural Styling & Global Design System */
+
+:root {
+  --primary-color: #1b4332;      /* Deep Forest Green */
+  --primary-light: #2d6a4f;      /* Soft Foliage Green */
+  --accent-color: #f7a072;       /* Warm Oilseed Amber */
+  --accent-secondary: #00b4d8;   /* Blockchain Cyan */
+  --bg-light: #f4f7f6;
+  --card-light: #ffffff;
+  --text-light: #1d2d24;
+  --border-light: #e0e7e4;
+
+  /* Dark Mode Variables */
+  --bg-dark: #09120e;
+  --card-dark: #12211a;
+  --text-dark: #ecf3f0;
+  --border-dark: #223f32;
+
+  --transition-speed: 0.3s;
+}
+
+body {
+  margin: 0;
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-light);
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+body.dark-mode {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+/* Glassmorphism Styles */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+body.dark-mode .glass-card {
+  background: rgba(18, 33, 26, 0.85);
+  border: 1px solid var(--border-dark);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+}
+
+body.dark-mode .glass-card:hover {
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+}
+
+/* Custom Navigations */
+.sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background-color: var(--primary-color);
+  color: white;
+  transition: all var(--transition-speed);
+}
+
+.sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.75);
+  border-radius: 8px;
+  margin: 4px 16px;
+  padding: 10px 16px;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+  color: white;
+  background-color: var(--primary-light);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* Header Adjustments */
+.header-navbar {
+  height: 70px;
+  background-color: var(--card-light);
+  border-bottom: 1px solid var(--border-light);
+  transition: all var(--transition-speed);
+}
+
+body.dark-mode .header-navbar {
+  background-color: var(--card-dark);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+/* Badge Enhancements */
+.badge-price {
+  background-color: rgba(247, 160, 114, 0.15);
+  color: #d97706;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+body.dark-mode .badge-price {
+  background-color: rgba(247, 160, 114, 0.25);
+  color: #fbbf24;
+}
+
+/* Inputs & Form Controls */
+.form-control, .form-select {
+  border-radius: 8px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-light);
+  background-color: var(--card-light);
+  color: var(--text-light);
+  transition: all 0.2s;
+}
+
+body.dark-mode .form-control, body.dark-mode .form-select {
+  border-color: var(--border-dark);
+  background-color: #1a2e24;
+  color: var(--text-dark);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.25);
+}
+
+/* Custom Buttons */
+.btn-primary-custom {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-primary-custom:hover {
+  background-color: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(27, 67, 50, 0.2);
+}
+
+/* Chat Assistant Panel */
+.chat-window {
+  height: 480px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.chat-bubble-user {
+  background-color: var(--primary-light);
+  color: white;
+  border-radius: 12px 12px 0 12px;
+  max-width: 75%;
+  align-self: flex-end;
+}
+
+.chat-bubble-bot {
+  background-color: var(--border-light);
+  color: var(--text-light);
+  border-radius: 12px 12px 12px 0;
+  max-width: 75%;
+  align-self: flex-start;
+}
+
+body.dark-mode .chat-bubble-bot {
+  background-color: var(--border-dark);
+  color: var(--text-dark);
+}
+
+/* Micro-animations */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(0, 180, 216, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0); }
+}
+
+.ledger-block-glow {
+  animation: pulseGlow 2s infinite;
+}

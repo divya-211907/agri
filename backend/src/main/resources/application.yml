@@ -1,0 +1,49 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: agrichain-backend
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/agrichain}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+# JWT Configuration
+jwt:
+  secret: 9a6560fca5a8a6b32525c5dd9cf9a38f321481d68377f0a6d25bfb83c480fc3c77d6118b6e2d1d07ec5cc66579b90214a1c5108f9024f9cf959247d4e3391783
+  expiration-ms: 86400000 # 24 hours
+  refresh-expiration-ms: 604800000 # 7 days
+
+# AWS & Bedrock AI Configuration
+aws:
+  region: us-east-1
+  bedrock:
+    simulate: true # Set to false to use actual AWS Bedrock API
+    access-key-id: ${AWS_ACCESS_KEY_ID:}
+    secret-access-key: ${AWS_SECRET_ACCESS_KEY:}
+
+# Logging Configuration
+logging:
+  level:
+    org.springframework.security: INFO
+    org.hibernate.SQL: INFO
+    com.agrichain: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

@@ -1,0 +1,33 @@
+# Java/Maven build directory
+backend/target/
+backend/.idea/
+backend/*.iml
+backend/.settings/
+backend/.project
+backend/.classpath
+
+# Node / React dependencies and builds
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# IDEs and OS files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Agent files
+.gemini/
+.agents/
