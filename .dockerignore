@@ -1,0 +1,6 @@
+backend/
+database/
+docs/
+.git/
+.gemini/
+.agents/
