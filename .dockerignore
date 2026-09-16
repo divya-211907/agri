@@ -4,3 +4,5 @@ docs/
 .git/
 .gemini/
 .agents/
+node_modules/
+dist/

@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -106,6 +107,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
+    @Transactional
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
@@ -126,13 +128,12 @@ public class AuthController {
         roles.add(userRole);
 
         user.setRoles(roles);
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.saveAndFlush(user);
 
-        // Populate and save profile based on role
+        // Populate and save profile based on role (MapsId automatically assigns ID from user)
         switch (ERole.valueOf(strRole)) {
             case FARMER:
                 Farmer farmer = Farmer.builder()
-                        .userId(savedUser.getId())
                         .user(savedUser)
                         .farmName(signUpRequest.getFarmName() != null ? signUpRequest.getFarmName() : "Farm_" + savedUser.getId())
                         .tamilFarmName(signUpRequest.getTamilFarmName() != null ? signUpRequest.getTamilFarmName() : "பண்ணை_" + savedUser.getId())
@@ -150,7 +151,6 @@ public class AuthController {
 
             case BUYER:
                 Buyer buyer = Buyer.builder()
-                        .userId(savedUser.getId())
                         .user(savedUser)
                         .companyName(signUpRequest.getCompanyName() != null ? signUpRequest.getCompanyName() : "Company_" + savedUser.getId())
                         .tamilCompanyName(signUpRequest.getTamilCompanyName() != null ? signUpRequest.getTamilCompanyName() : "நிறுவனம்_" + savedUser.getId())
@@ -164,7 +164,6 @@ public class AuthController {
 
             case PROCESSOR:
                 Processor processor = Processor.builder()
-                        .userId(savedUser.getId())
                         .user(savedUser)
                         .facilityName(signUpRequest.getFacilityName() != null ? signUpRequest.getFacilityName() : "Facility_" + savedUser.getId())
                         .tamilFacilityName(signUpRequest.getTamilFacilityName() != null ? signUpRequest.getTamilFacilityName() : "ஆலை_" + savedUser.getId())
@@ -178,7 +177,6 @@ public class AuthController {
 
             case EXPORTER:
                 Exporter exporter = Exporter.builder()
-                        .userId(savedUser.getId())
                         .user(savedUser)
                         .licenseNumber(signUpRequest.getLicenseNumber() != null ? signUpRequest.getLicenseNumber() : "LIC-" + System.currentTimeMillis())
                         .exportDestinations(signUpRequest.getExportDestinations() != null ? signUpRequest.getExportDestinations() : "")
