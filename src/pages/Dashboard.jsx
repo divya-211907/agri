@@ -56,12 +56,17 @@ const Dashboard = () => {
       const res = await axios.get(`http://localhost:8080/api/analytics/dashboard?lang=${lang}`);
       setData(res.data);
 
-      if (res.data.role === 'FARMER') {
-        const orderRes = await axios.get('http://localhost:8080/api/orders/farmer');
-        setOrders(orderRes.data);
-      } else if (res.data.role !== 'ADMIN') {
-        const orderRes = await axios.get('http://localhost:8080/api/orders/my');
-        setOrders(orderRes.data);
+      try {
+        if (res.data.role === 'FARMER') {
+          const orderRes = await axios.get('http://localhost:8080/api/orders/farmer');
+          setOrders(orderRes.data || []);
+        } else if (res.data.role !== 'ADMIN') {
+          const orderRes = await axios.get('http://localhost:8080/api/orders/my');
+          setOrders(orderRes.data || []);
+        }
+      } catch (orderErr) {
+        console.warn('Could not load orders:', orderErr);
+        setOrders([]);
       }
 
       // Fetch dynamic verified market price history from AGMARKNET records

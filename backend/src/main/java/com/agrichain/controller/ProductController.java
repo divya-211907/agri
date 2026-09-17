@@ -44,7 +44,11 @@ public class ProductController {
     @PostMapping
     @PreAuthorize("hasRole('FARMER')")
     public ResponseEntity<Product> createProduct(@RequestBody Product product, @RequestParam("categoryId") Integer categoryId) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof UserDetailsImpl)) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
         Product createdProduct = productService.createProduct(userDetails.getId(), product, categoryId);
         return ResponseEntity.ok(createdProduct);
     }

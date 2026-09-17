@@ -62,9 +62,19 @@ const Register = () => {
         ...formData
       };
 
-      // Clean payload numbers
-      if (payload.sizeAcres) payload.sizeAcres = parseFloat(payload.sizeAcres);
-      if (payload.capacityTonsDay) payload.capacityTonsDay = parseFloat(payload.capacityTonsDay);
+      // Clean payload numbers (avoid empty strings)
+      if (payload.sizeAcres !== '' && payload.sizeAcres != null) {
+        const num = parseFloat(payload.sizeAcres);
+        payload.sizeAcres = isNaN(num) ? null : num;
+      } else {
+        payload.sizeAcres = null;
+      }
+      if (payload.capacityTonsDay !== '' && payload.capacityTonsDay != null) {
+        const num = parseFloat(payload.capacityTonsDay);
+        payload.capacityTonsDay = isNaN(num) ? null : num;
+      } else {
+        payload.capacityTonsDay = null;
+      }
 
       await register(payload);
       setSuccess("Registration successful! Redirecting to login page...");

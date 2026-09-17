@@ -38,7 +38,11 @@ public class AnalyticsController {
 
     @GetMapping("/dashboard")
     public ResponseEntity<Map<String, Object>> getDashboardData(@RequestParam(value = "lang", defaultValue = "en") String lang) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof UserDetailsImpl)) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
         String role = userDetails.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
         boolean isTamil = "ta".equalsIgnoreCase(lang);
 

@@ -22,14 +22,22 @@ public class OrderController {
     @PostMapping
     @PreAuthorize("hasRole('BUYER') or hasRole('PROCESSOR') or hasRole('EXPORTER')")
     public ResponseEntity<Order> placeOrder(@RequestBody OrderRequest orderRequest) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof UserDetailsImpl)) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
         Order order = orderService.placeOrder(userDetails.getId(), orderRequest);
         return ResponseEntity.ok(order);
     }
 
     @GetMapping
     public ResponseEntity<List<Order>> getOrders() {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof UserDetailsImpl)) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
 
         if (role.equals("ROLE_ADMIN")) {
@@ -40,6 +48,30 @@ public class OrderController {
             // Buyers, Processors, Exporters
             return ResponseEntity.ok(orderService.getOrdersByBuyer(userDetails.getId()));
         }
+    }
+
+    @GetMapping("/farmer")
+    public ResponseEntity<List<Order>> getFarmerOrders() {
+        org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof UserDetailsImpl)) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+        return ResponseEntity.ok(orderService.getOrdersByFarmer(userDetails.getId()));
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<Order>> getMyOrders() {
+        org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof UserDetailsImpl)) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+        String role = userDetails.getAuthorities().iterator().next().getAuthority();
+        if (role.equals("ROLE_FARMER")) {
+            return ResponseEntity.ok(orderService.getOrdersByFarmer(userDetails.getId()));
+        }
+        return ResponseEntity.ok(orderService.getOrdersByBuyer(userDetails.getId()));
     }
 
     @GetMapping("/{id}")
