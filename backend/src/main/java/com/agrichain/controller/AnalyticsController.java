@@ -33,6 +33,9 @@ public class AnalyticsController {
     @Autowired
     private LedgerService ledgerService;
 
+    @Autowired
+    private com.agrichain.service.MarketPriceService marketPriceService;
+
     @GetMapping("/dashboard")
     public ResponseEntity<Map<String, Object>> getDashboardData(@RequestParam(value = "lang", defaultValue = "en") String lang) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -77,10 +80,12 @@ public class AnalyticsController {
             data.put("pendingOrders", pendingOrdersCount);
             data.put("listedProductsCount", myProducts.size());
 
-            // AI analytics summary (Tamil/English translation)
+            // Real data-driven analytics summary based on official market records
+            Map<String, Object> trend = marketPriceService.calculatePriceTrend("Groundnut Cake");
+            double pct = trend.containsKey("priceChangePercent") ? (double) trend.get("priceChangePercent") : 0.0;
             String aiSummary = isTamil ?
-                    "உங்கள் சோயாமீல் இருப்பு திருப்திகரமாக உள்ளது. கோவை சந்தையில் புண்ணாக்கு தேவை 18% அதிகரித்துள்ளதால், உங்கள் கடலை புண்ணாக்கு விலையை கிலோவுக்கு ₹2 உயர்த்த பரிந்துரைக்கப்படுகிறது. மொத்த வருவாய் ₹" + totalRevenue + " நிறைவடைந்துள்ளது." :
-                    "Your Soymeal stock is satisfactory. Since groundnut oil cake demand in Coimbatore rose by 18%, we suggest increasing your cake listing price by ₹2/kg. Total revenue earned is ₹" + totalRevenue + ".";
+                    String.format("உங்கள் உற்பத்தி இருப்பு கண்காணிக்கப்படுகிறது. கடலை புண்ணாக்கு விலை போக்கு: %s%.1f%% (அதிகாரப்பூர்வ மண்டி மாதிரி விலை அடிப்படையில்). மொத்த வருவாய் ₹%.2f நிறைவடைந்துள்ளது.", pct >= 0 ? "+" : "", pct, totalRevenue) :
+                    String.format("Your inventory is active. Groundnut oil cake verified price trend: %s%.1f%% based on reported mandi modal prices. Total completed sales revenue is ₹%.2f.", pct >= 0 ? "+" : "", pct, totalRevenue);
             data.put("aiSummary", aiSummary);
 
         } else if ("BUYER".equals(role) || "PROCESSOR".equals(role) || "EXPORTER".equals(role)) {
@@ -109,13 +114,15 @@ public class AnalyticsController {
 
             if ("EXPORTER".equals(role)) {
                 // Export recommendation metrics
-                data.put("exportReadinessScore", 85.0);
+                data.put("exportReadinessScore", 80.0);
                 data.put("recommendedDestinations", Arrays.asList("Singapore", "Malaysia"));
             }
 
+            Map<String, Object> trend = marketPriceService.calculatePriceTrend("Soymeal");
+            double pct = trend.containsKey("priceChangePercent") ? (double) trend.get("priceChangePercent") : 0.0;
             String aiSummary = isTamil ?
-                    "இந்த மாதம் உங்களின் மொத்த கொள்முதல் ₹" + totalSpent + " ஆகும். சோயாமீல் விலைகள் அடுத்த வாரம் 4.5% உயரும் என கணிக்கப்பட்டுள்ளது, எனவே உங்கள் கொள்முதலை விரைவுபடுத்துங்கள்." :
-                    "Your procurement total this month is ₹" + totalSpent + ". Soymeal prices are predicted to rise by 4.5% next week, so lock in your purchases early.";
+                    String.format("இந்த மாதம் உங்களின் மொத்த கொள்முதல் ₹%.2f ஆகும். சோயாமீல் அதிகாரப்பூர்வ மண்டி விலை போக்கு %s%.1f%% ஆக பதிவாகியுள்ளது. சந்தை விலைகளை ஒப்பிட்டு கொள்முதலைத் திட்டமிடுங்கள்.", totalSpent, pct >= 0 ? "+" : "", pct) :
+                    String.format("Your procurement total this month is ₹%.2f. Official Soymeal price trend is %s%.1f%% based on reported mandi modal data. Compare regional markets to optimize purchase timing.", totalSpent, pct >= 0 ? "+" : "", pct);
             data.put("aiSummary", aiSummary);
 
         } else if ("ADMIN".equals(role)) {

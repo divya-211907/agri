@@ -47,3 +47,12 @@ logging:
     com.agrichain: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Official Agricultural Market Data Configuration (AGMARKNET / data.gov.in)
+market:
+  data-gov:
+    api-key: ${DATA_GOV_API_KEY:${AGMARKNET_API_KEY:}}
+    resource-id: ${DATA_GOV_RESOURCE_ID:9ef84268-d588-465a-a308-a864a43d0070}
+    base-url: https://api.data.gov.in/resource/
+    cache-ttl-hours: 6
+

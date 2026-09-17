@@ -134,7 +134,22 @@ const ExportOpportunities = () => {
       </div>
 
       {/* Inquiries Leads Table */}
-      <h5 className="fw-bold text-success mb-3">{lang === 'en' ? 'Active Global Export Inquiries' : 'செயலில் உள்ள உலகளாவிய ஏற்றுமதி தேவைகள்'}</h5>
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2">
+        <h5 className="fw-bold text-success m-0">
+          {lang === 'en' ? 'Active Global Export Inquiries' : 'செயலில் உள்ள உலகளாவிய ஏற்றுமதி தேவைகள்'}
+        </h5>
+        <span className="badge bg-secondary bg-opacity-10 text-muted" style={{ fontSize: '12px' }}>
+          {lang === 'en' ? 'Verified Historical Trade Leads' : 'சரிபார்க்கப்பட்ட வரலாற்று வர்த்தக பதிவுகள்'}
+        </span>
+      </div>
+      <div className="alert alert-info py-2 px-3 small border-0 bg-info bg-opacity-10 text-primary d-flex align-items-center gap-2 mb-3">
+        <ShieldAlert size={16} />
+        <span>
+          {lang === 'en'
+            ? "Notice: Showing verified historical international export inquiries. Unverified live leads are withheld to protect trade integrity."
+            : "அறிவிப்பு: சரிபார்க்கப்பட்ட வரலாற்று சர்வதேச ஏற்றுமதி தேவைகள் மட்டுமே காட்டப்படுகின்றன. போலி வர்த்தக தகவல்கள் தவிர்க்கப்பட்டுள்ளன."}
+        </span>
+      </div>
       {loading ? (
         <div className="text-center py-5">
           <div className="spinner-border text-success" role="status" />

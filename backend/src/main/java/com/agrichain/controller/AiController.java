@@ -28,13 +28,14 @@ public class AiController {
     private ChatbotConversationRepository chatbotRepository;
 
     @PostMapping("/chat")
-    public ResponseEntity<Map<String, String>> chat(@RequestBody Map<String, String> body, @RequestParam(value = "lang", defaultValue = "en") String lang) {
+    public ResponseEntity<Map<String, Object>> chat(@RequestBody Map<String, String> body, @RequestParam(value = "lang", defaultValue = "en") String lang) {
         String message = body.get("message");
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findById(userDetails.getId()).orElseThrow();
 
-        // Get AI response
-        String aiResponse = aiService.chatWithMarketAssistant(user.getId(), message, lang);
+        // Get AI response with full market data payload
+        Map<String, Object> aiResult = aiService.chatWithMarketAssistantDetailed(user.getId(), message, lang);
+        String aiResponse = (String) aiResult.get("response");
 
         // Persist conversation
         boolean isTamil = "ta".equalsIgnoreCase(lang);
@@ -47,9 +48,7 @@ public class AiController {
                 .build();
         chatbotRepository.save(conversation);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("response", aiResponse);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(aiResult);
     }
 
     @GetMapping("/price-prediction/{categoryId}")
